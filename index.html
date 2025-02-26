@@ -22,6 +22,22 @@
       border: 1px solid #ccc;
       border-radius: 5px;
       background-color: #f9f9f9;
+      text-align: left;
+      max-width: 400px;
+      margin: 20px auto;
+    }
+    .data-item {
+      margin-bottom: 15px;
+      padding-bottom: 15px;
+      border-bottom: 1px solid #ddd;
+    }
+    .data-item:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+      padding-bottom: 0;
+    }
+    .data-item p {
+      margin: 5px 0;
     }
   </style>
 </head>
@@ -31,11 +47,8 @@
     <p>Selamat datang, <strong><span id="user-name"></span></strong>!</p>
     <p>ID Telegram Anda: <strong><span id="user-id"></span></strong></p>
   </div>
-  <div class="user-data">
-    <p><strong>inet:</strong> <span id="user-inet"></span></p>
-    <p><strong>tim:</strong> <span id="user-tim"></span></p>
-    <p><strong>sto:</strong> <span id="user-sto"></span></p>
-    <p><strong>status:</strong> <span id="user-status"></span></p>
+  <div id="data-container" class="user-data">
+    <!-- Data akan ditampilkan di sini -->
   </div>
 
   <script>
@@ -53,13 +66,22 @@
       fetch(`${webAppUrl}?telegramId=${telegramId}`)
         .then(response => response.json())
         .then(data => {
+          const dataContainer = document.getElementById('data-container');
           if (data.length > 0) {
-            document.getElementById('user-inet').innerText = data[0].inet;
-            document.getElementById('user-tim').innerText = data[0].tim;
-            document.getElementById('user-sto').innerText = data[0].sto;
-            document.getElementById('user-status').innerText = data[0].status;
+            dataContainer.innerHTML = ''; // Kosongkan container sebelum menambahkan data baru
+            data.forEach((item, index) => {
+              const dataItem = document.createElement('div');
+              dataItem.className = 'data-item';
+              dataItem.innerHTML = `
+                <p><strong>inet:</strong> ${item.inet}</p>
+                <p><strong>tim:</strong> ${item.tim}</p>
+                <p><strong>sto:</strong> ${item.sto}</p>
+                <p><strong>status:</strong> ${item.status}</p>
+              `;
+              dataContainer.appendChild(dataItem);
+            });
           } else {
-            document.getElementById('user-inet').innerText = 'Data tidak ditemukan';
+            dataContainer.innerHTML = '<p>Data tidak ditemukan</p>';
           }
         })
         .catch(error => console.error('Error fetching data:', error));
