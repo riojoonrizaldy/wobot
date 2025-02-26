@@ -16,6 +16,13 @@
       margin-bottom: 20px;
       color: #333;
     }
+    .summary {
+      margin-bottom: 20px;
+      font-size: 1.1em;
+    }
+    .summary p {
+      margin: 5px 0;
+    }
     .user-data {
       margin-top: 20px;
       padding: 10px;
@@ -39,6 +46,21 @@
     .data-item p {
       margin: 5px 0;
     }
+    .collapse-button {
+      background-color: #0088cc;
+      color: white;
+      padding: 5px 10px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+    .collapse-content {
+      display: none;
+    }
+    .collapse-content.expanded {
+      display: block;
+    }
   </style>
 </head>
 <body>
@@ -47,13 +69,34 @@
     <p>Selamat datang, <strong><span id="user-name"></span></strong>!</p>
     <p>ID Telegram Anda: <strong><span id="user-id"></span></strong></p>
   </div>
-  <div id="data-container" class="user-data">
-    <!-- Data akan ditampilkan di sini -->
+  <div class="summary">
+    <p><strong>Total Tiket:</strong> <span id="total-tiket">0</span></p>
+    <p><strong>Sisa:</strong> <span id="sisa-tiket">0</span></p>
+    <p><strong>Close:</strong> <span id="close-tiket">0</span></p>
+  </div>
+  <div id="sisa-container" class="user-data">
+    <h3>Sisa</h3>
+    <!-- Data Sisa akan ditampilkan di sini -->
+  </div>
+  <div id="close-container" class="user-data">
+    <button class="collapse-button" onclick="toggleCollapse('close-content')">Tampilkan Close</button>
+    <div id="close-content" class="collapse-content">
+      <h3>Close</h3>
+      <!-- Data Close akan ditampilkan di sini -->
+    </div>
   </div>
 
   <script>
     const tg = window.Telegram.WebApp;
     const user = tg.initDataUnsafe.user;
+
+    // Fungsi untuk toggle collapse
+    function toggleCollapse(id) {
+      const content = document.getElementById(id);
+      content.classList.toggle('expanded');
+      const button = content.previousElementSibling;
+      button.innerText = content.classList.contains('expanded') ? 'Sembunyikan Close' : 'Tampilkan Close';
+    }
 
     if (user) {
       // Tampilkan nama dan ID Telegram pengguna
@@ -66,10 +109,18 @@
       fetch(`${webAppUrl}?telegramId=${telegramId}`)
         .then(response => response.json())
         .then(data => {
-          const dataContainer = document.getElementById('data-container');
+          const sisaContainer = document.getElementById('sisa-container');
+          const closeContainer = document.getElementById('close-content');
+          const totalTiket = data.length;
+          let sisaTiket = 0;
+          let closeTiket = 0;
+
+          // Kosongkan container sebelum menambahkan data baru
+          sisaContainer.innerHTML = '<h3>Sisa</h3>';
+          closeContainer.innerHTML = '<h3>Close</h3>';
+
           if (data.length > 0) {
-            dataContainer.innerHTML = ''; // Kosongkan container sebelum menambahkan data baru
-            data.forEach((item, index) => {
+            data.forEach((item) => {
               const dataItem = document.createElement('div');
               dataItem.className = 'data-item';
               dataItem.innerHTML = `
@@ -78,10 +129,22 @@
                 <p><strong>sto:</strong> ${item.sto}</p>
                 <p><strong>status:</strong> ${item.status}</p>
               `;
-              dataContainer.appendChild(dataItem);
+
+              if (item.status.toLowerCase() === 'close') {
+                closeContainer.appendChild(dataItem);
+                closeTiket++;
+              } else {
+                sisaContainer.appendChild(dataItem);
+                sisaTiket++;
+              }
             });
+
+            // Update summary
+            document.getElementById('total-tiket').innerText = totalTiket;
+            document.getElementById('sisa-tiket').innerText = sisaTiket;
+            document.getElementById('close-tiket').innerText = closeTiket;
           } else {
-            dataContainer.innerHTML = '<p>Data tidak ditemukan</p>';
+            sisaContainer.innerHTML = '<p>Data tidak ditemukan</p>';
           }
         })
         .catch(error => console.error('Error fetching data:', error));
