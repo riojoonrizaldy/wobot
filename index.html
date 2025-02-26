@@ -11,6 +11,11 @@
       padding: 20px;
       text-align: center;
     }
+    .welcome-message {
+      font-size: 1.2em;
+      margin-bottom: 20px;
+      color: #333;
+    }
     .user-data {
       margin-top: 20px;
       padding: 10px;
@@ -22,11 +27,15 @@
 </head>
 <body>
   <h1>Welcome to Mini Apps</h1>
+  <div class="welcome-message">
+    <p>Selamat datang, <strong><span id="user-name"></span></strong>!</p>
+    <p>ID Telegram Anda: <strong><span id="user-id"></span></strong></p>
+  </div>
   <div class="user-data">
-    <p><strong>Nama:</strong> <span id="user-name"></span></p>
-    <p><strong>Alamat:</strong> <span id="user-address"></span></p>
-    <p><strong>Email:</strong> <span id="user-email"></span></p>
-    <p><strong>Tanggal:</strong> <span id="user-date"></span></p>
+    <p><strong>inet:</strong> <span id="user-inet"></span></p>
+    <p><strong>tim:</strong> <span id="user-tim"></span></p>
+    <p><strong>sto:</strong> <span id="user-sto"></span></p>
+    <p><strong>status:</strong> <span id="user-status"></span></p>
   </div>
 
   <script>
@@ -34,6 +43,10 @@
     const user = tg.initDataUnsafe.user;
 
     if (user) {
+      // Tampilkan nama dan ID Telegram pengguna
+      document.getElementById('user-name').innerText = user.first_name || 'Pengguna';
+      document.getElementById('user-id').innerText = user.id;
+
       const telegramId = user.id.toString();
       const webAppUrl = 'https://script.google.com/macros/s/AKfycbxu6LePmmA54KavFZravfZu6HvkDHVCukw-DvnYVPdnUWNaakZ3XbbuayTQvs8Y_nJk/exec'; // Ganti dengan URL Web App Google Apps Script
 
@@ -41,15 +54,18 @@
         .then(response => response.json())
         .then(data => {
           if (data.length > 0) {
-            document.getElementById('user-name').innerText = data[0].nama;
-            document.getElementById('user-address').innerText = data[0].alamat;
-            document.getElementById('user-email').innerText = data[0].email;
-            document.getElementById('user-date').innerText = data[0].tanggal;
+            document.getElementById('user-inet').innerText = data[0].inet;
+            document.getElementById('user-tim').innerText = data[0].tim;
+            document.getElementById('user-sto').innerText = data[0].sto;
+            document.getElementById('user-status').innerText = data[0].status;
           } else {
-            document.getElementById('user-name').innerText = 'Data tidak ditemukan';
+            document.getElementById('user-inet').innerText = 'Data tidak ditemukan';
           }
         })
         .catch(error => console.error('Error fetching data:', error));
+    } else {
+      document.getElementById('user-name').innerText = 'Pengguna';
+      document.getElementById('user-id').innerText = 'Tidak tersedia';
     }
 
     tg.expand();
