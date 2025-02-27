@@ -69,6 +69,13 @@
       border: 1px solid #ccc;
       border-radius: 5px;
     }
+    .search-box {
+      width: 100%;
+      padding: 5px;
+      margin-top: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
   </style>
 </head>
 <body>
@@ -106,6 +113,20 @@
       button.innerText = content.classList.contains('expanded') ? 'Sembunyikan Close' : 'Tampilkan Close';
     }
 
+    // Fungsi untuk memfilter dropdown berdasarkan pencarian
+    function filterDropdown(input, dropdown) {
+      const filter = input.value.toUpperCase();
+      const options = dropdown.getElementsByTagName('option');
+      for (let i = 0; i < options.length; i++) {
+        const option = options[i];
+        if (option.text.toUpperCase().indexOf(filter) > -1) {
+          option.style.display = '';
+        } else {
+          option.style.display = 'none';
+        }
+      }
+    }
+
     if (user) {
       // Tampilkan nama dan ID Telegram pengguna
       document.getElementById('user-name').innerText = user.first_name || 'Pengguna';
@@ -140,17 +161,26 @@
 
               // Tambahkan dropdown jika status bukan "Close"
               if (item.status.toLowerCase() !== 'close') {
+                const searchBox = document.createElement('input');
+                searchBox.type = 'text';
+                searchBox.className = 'search-box';
+                searchBox.placeholder = 'Cari opsi...';
+                searchBox.oninput = function() {
+                  filterDropdown(this, dropdown);
+                };
+
                 const dropdown = document.createElement('select');
                 dropdown.innerHTML = `<option value="">Pilih opsi</option>` +
                   data.dropdownOptions.map(option => `<option value="${option}">${option}</option>`).join('');
+
+                dataItem.appendChild(searchBox);
                 dataItem.appendChild(dropdown);
+                sisaContainer.appendChild(dataItem);
                 sisaTiket++;
               } else {
                 closeContainer.appendChild(dataItem);
                 closeTiket++;
               }
-
-              sisaContainer.appendChild(dataItem);
             });
 
             // Update summary
