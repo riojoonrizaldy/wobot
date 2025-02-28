@@ -140,7 +140,7 @@
     function saveToSheet(serviceNo, perbaikan, penyebab, material) {
       const url = 'https://script.google.com/macros/s/AKfycbxu6LePmmA54KavFZravfZu6HvkDHVCukw-DvnYVPdnUWNaakZ3XbbuayTQvs8Y_nJk/exec'; // Ganti dengan URL Web App Google Apps Script
       const data = {
-        serviceNo: serviceNo,
+        serviceNo: item.inet,
         perbaikan: perbaikan,
         penyebab: penyebab,
         material: material
