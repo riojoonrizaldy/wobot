@@ -6,7 +6,100 @@
   <title>Telegram Mini Apps</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <style>
-    /* CSS tetap sama */
+    body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            text-align: center;
+            background-color: #ccc;
+        }
+
+        .welcome-message {
+            font-size: 1.2em;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .summary {
+            margin-bottom: 20px;
+            font-size: 1.1em;
+        }
+
+        .summary p {
+            margin: 5px 0;
+        }
+
+        .user-data {
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+            text-align: left;
+            max-width: 400px;
+            margin: 20px auto;
+        }
+
+        .data-item {
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .data-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .data-item p {
+            margin: 5px 0;
+        }
+
+        .collapse-button {
+            background-color: #0088cc;
+            color: white;
+            padding: 5px 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .collapse-content {
+            display: none;
+        }
+
+        .collapse-content.expanded {
+            display: block;
+        }
+
+        select,
+        input[type="text"],
+        button {
+            width: 100%;
+            padding: 5px;
+            margin-top: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .search-box {
+            width: 100%;
+            padding: 5px;
+            margin-top: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .close-button {
+            background-color: #cc0000;
+            color: white;
+            padding: 5px 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
   </style>
 </head>
 <body>
