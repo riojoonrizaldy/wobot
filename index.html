@@ -156,7 +156,8 @@
                 body: JSON.stringify(data),
                 headers: {
                     'Content-Type': 'application/json'
-                }
+                },
+                mode: 'cors' // Tambahkan mode CORS
             })
                 .then(response => {
                     if (!response.ok) {
