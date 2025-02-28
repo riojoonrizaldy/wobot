@@ -62,7 +62,7 @@
     .collapse-content.expanded {
       display: block;
     }
-    select {
+    select, input[type="text"], button {
       width: 100%;
       padding: 5px;
       margin-top: 10px;
@@ -75,6 +75,15 @@
       margin-top: 10px;
       border: 1px solid #ccc;
       border-radius: 5px;
+    }
+    .close-button {
+      background-color: #cc0000;
+      color: white;
+      padding: 5px 10px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-top: 10px;
     }
   </style>
 </head>
@@ -127,6 +136,34 @@
       }
     }
 
+    // Fungsi untuk menyimpan data ke Google Spreadsheet
+    function saveToSheet(serviceNo, perbaikan, penyebab, material) {
+      const url = 'https://script.google.com/macros/s/AKfycbxu6LePmmA54KavFZravfZu6HvkDHVCukw-DvnYVPdnUWNaakZ3XbbuayTQvs8Y_nJk/exec'; // Ganti dengan URL Web App Google Apps Script
+      const data = {
+        serviceNo: serviceNo,
+        perbaikan: perbaikan,
+        penyebab: penyebab,
+        material: material
+      };
+
+      fetch(url, {
+        method: 'POST',
+        body: JSON.stringify(data),
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
+      .then(response => response.json())
+      .then(result => {
+        if (result.success) {
+          alert('Data berhasil disimpan!');
+        } else {
+          alert('Gagal menyimpan data.');
+        }
+      })
+      .catch(error => console.error('Error:', error));
+    }
+
     if (user) {
       // Tampilkan nama dan ID Telegram pengguna
       document.getElementById('user-name').innerText = user.first_name || 'Pengguna';
@@ -159,7 +196,7 @@
                 <p><strong>status:</strong> ${item.status}</p>
               `;
 
-              // Tambahkan dropdown jika status bukan "Close"
+              // Tambahkan dropdown, input penyebab, input material, dan tombol close jika status bukan "Close"
               if (item.status.toLowerCase() !== 'close') {
                 const searchBox = document.createElement('input');
                 searchBox.type = 'text';
@@ -173,8 +210,33 @@
                 dropdown.innerHTML = `<option value="">Pilih opsi</option>` +
                   data.dropdownOptions.map(option => `<option value="${option}">${option}</option>`).join('');
 
+                const penyebabInput = document.createElement('input');
+                penyebabInput.type = 'text';
+                penyebabInput.placeholder = 'Penyebab...';
+
+                const materialInput = document.createElement('input');
+                materialInput.type = 'text';
+                materialInput.placeholder = 'Material...';
+
+                const closeButton = document.createElement('button');
+                closeButton.className = 'close-button';
+                closeButton.innerText = 'Close';
+                closeButton.onclick = function() {
+                  const perbaikan = dropdown.value;
+                  const penyebab = penyebabInput.value;
+                  const material = materialInput.value;
+                  if (!perbaikan || !penyebab || !material) {
+                    alert('Harap isi semua field!');
+                    return;
+                  }
+                  saveToSheet(item.inet, perbaikan, penyebab, material);
+                };
+
                 dataItem.appendChild(searchBox);
                 dataItem.appendChild(dropdown);
+                dataItem.appendChild(penyebabInput);
+                dataItem.appendChild(materialInput);
+                dataItem.appendChild(closeButton);
                 sisaContainer.appendChild(dataItem);
                 sisaTiket++;
               } else {
